@@ -26,5 +26,8 @@ short make_vga_entry(char c, char color);
 
 void putchar(char c);
 void putchar_color(char c, char color);
+void putint(unsigned int i);
+void puthex(unsigned int i);
+void print(char* string);
 
 #endif

@@ -4,6 +4,10 @@
 
 void init()
 {
-	putchar('F');
-	putchar_color('D', make_vga_color(COLOR_LIGHT_BLUE, COLOR_BLACK));
+	char string[] = "Hello!";
+	print(string);
+	puthex(16);
+	puthex(0x10);
+	puthex(32);
+	puthex(0x20);
 }
