@@ -23,15 +23,15 @@ enum vga_color
 
 short terminal_pos;
 
-char make_vga_color(enum vga_color fg, enum vga_color bg);
+char makeVGAColor(enum vga_color fg, enum vga_color bg);
 
-void terminal_set_color(char color);
+void terminalSetColor(char color);
 void terminal_init();
 
-void putchar(char c);
-void putchar_color(char c, char color);
-void putint(unsigned int i);
-void puthex(unsigned int i);
+void putChar(char c);
+void putChar_color(char c, char color);
+void putInt(unsigned int i);
+void putHex(unsigned int i);
 void print(char* string);
 
 #endif

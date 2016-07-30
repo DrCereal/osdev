@@ -3,32 +3,32 @@
 
 static char* VIDMEM = (char*) 0xb8000;
 
-short terminal_pos = 0;
-char terminal_color = 0x0f;
+short terminalPos = 0;
+char terminalColor = 0x0f;
 
-char make_vga_color(enum vga_color fg, enum vga_color bg)
+char makeVGAColor(enum vga_color fg, enum vga_color bg)
 {
 	return fg | bg << 4;
 }
 
-void terminal_set_color(char color)
+void terminalSetColor(char color)
 {
-	terminal_color = color;
+	terminalColor = color;
 	for(int i = 0; i < 80 * 25; i++)
 	{
-		VIDMEM[i * 2 + 1] = terminal_color;
+		VIDMEM[i * 2 + 1] = terminalColor;
 	}
 }
 
 void terminal_init()
 {
-	terminal_set_color(make_vga_color(COLOR_LIGHT_GREY, COLOR_BLACK));
+	terminalSetColor(makeVGAColor(COLOR_LIGHT_GREY, COLOR_BLACK));
 }
 
 void updateCursor()
 {
-	char high = terminal_pos >> 8;
-	char low = terminal_pos & 0xff;
+	char high = terminalPos >> 8;
+	char low = terminalPos & 0xff;
 
 	outb(0x03d4, 0x0f);
 	outb(0x03d5, low);
@@ -36,26 +36,26 @@ void updateCursor()
 	outb(0x03d5, high);
 }
 
-void putchar(char c)
+void putChar(char c)
 {
-	putchar_color(c, terminal_color);
+	putChar_color(c, terminalColor);
 }
 
-void putchar_color(char c, char color)
+void putChar_color(char c, char color)
 {
-	short absolute_pos = terminal_pos * 2;
-	VIDMEM[absolute_pos] = c;
-	VIDMEM[absolute_pos + 1] = color;
+	short absolutePos = terminalPos * 2;
+	VIDMEM[absolutePos] = c;
+	VIDMEM[absolutePos + 1] = color;
 
-	terminal_pos++;
-	if(terminal_pos >= 80 * 25)
+	terminalPos++;
+	if(terminalPos >= 80 * 25)
 	{
-		terminal_pos = 0;
+		terminalPos = 0;
 	}
 	updateCursor();
 }
 
-void putint(unsigned int i)
+void putInt(unsigned int i)
 {
 	char digits[10];
 	unsigned char count = 0;
@@ -69,15 +69,15 @@ void putint(unsigned int i)
 
 	while(count > 0)
 	{
-		putchar(digits[count - 1] + 0x30);
+		putChar(digits[count - 1] + 0x30);
 		count--;
 	}
 }
 
-void puthex(unsigned int i)
+void putHex(unsigned int i)
 {
-	putchar('0');
-	putchar('x');
+	putChar('0');
+	putChar('x');
 	char digits[8];
 	unsigned char count = 0;
 	
@@ -91,9 +91,9 @@ void puthex(unsigned int i)
 	while(count > 0)
 	{
 		if(digits[count - 1] > 9)
-			putchar(digits[count - 1] + 0x36);
+			putChar(digits[count - 1] + 0x36);
 		else
-			putchar(digits[count - 1] + 0x30);
+			putChar(digits[count - 1] + 0x30);
 		count--;
 	}
 }
@@ -102,6 +102,6 @@ void print(char* string)
 {
 	for(int i = 0; string[i] != 0; i++)
 	{
-		putchar(string[i]);
+		putChar(string[i]);
 	}
 }

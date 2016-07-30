@@ -15,7 +15,7 @@ inline char inb(short port)
 {
 	char ret;
 	__asm__("inb %1, %0":
-		"=r"(ret):
+		"=a"(ret):
 		"Nd"(port)
 	);
 	return ret;
