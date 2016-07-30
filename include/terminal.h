@@ -21,8 +21,12 @@ enum vga_color
 	COLOR_WHITE,
 };
 
+short terminal_pos;
+
 char make_vga_color(enum vga_color fg, enum vga_color bg);
-short make_vga_entry(char c, char color);
+
+void terminal_set_color(char color);
+void terminal_init();
 
 void putchar(char c);
 void putchar_color(char c, char color);

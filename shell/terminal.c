@@ -1,7 +1,7 @@
 #include <asm/io.h>
 #include <terminal.h>
 
-static short* VIDMEM = (short*) 0xb8000;
+static char* VIDMEM = (char*) 0xb8000;
 
 short terminal_pos = 0;
 char terminal_color = 0x0f;
@@ -11,17 +11,25 @@ char make_vga_color(enum vga_color fg, enum vga_color bg)
 	return fg | bg << 4;
 }
 
-short make_vga_entry(char c, char color)
+void terminal_set_color(char color)
 {
-	short c16 = c;
-	short color16 = color;
-	return c16 | color16 << 8;
+	terminal_color = color;
+	for(int i = 0; i < 80 * 25; i++)
+	{
+		VIDMEM[i * 2 + 1] = terminal_color;
+	}
+}
+
+void terminal_init()
+{
+	terminal_set_color(make_vga_color(COLOR_LIGHT_GREY, COLOR_BLACK));
 }
 
 void updateCursor()
 {
 	char high = terminal_pos >> 8;
-	char low = terminal_pos & 0x0f;
+	char low = terminal_pos & 0xff;
+
 	outb(0x03d4, 0x0f);
 	outb(0x03d5, low);
 	outb(0x03d4, 0x0e);
@@ -30,19 +38,14 @@ void updateCursor()
 
 void putchar(char c)
 {
-	VIDMEM[terminal_pos] = make_vga_entry(c, terminal_color);
-
-	terminal_pos++;
-	if(terminal_pos >= 80 * 25)
-	{
-		terminal_pos = 0;
-	}
-	updateCursor();
+	putchar_color(c, terminal_color);
 }
 
 void putchar_color(char c, char color)
-{	
-	VIDMEM[terminal_pos] = make_vga_entry(c, color);
+{
+	short absolute_pos = terminal_pos * 2;
+	VIDMEM[absolute_pos] = c;
+	VIDMEM[absolute_pos + 1] = color;
 
 	terminal_pos++;
 	if(terminal_pos >= 80 * 25)
