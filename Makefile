@@ -1,7 +1,7 @@
 #This is how your cross compiler directory needs to be set up
 CC=cc/bin/i686-elf-gcc
 
-DEPS=kernel/*.c shell/*.c
+DEPS=kernel/*.c shell/*.c mm/*.c
 CCFLAGS=-std=gnu99 -ffreestanding -O2 -Wall -Wextra
 LDFLAGS=-ffreestanding -O2 -nostdlib
 LINKER=cc/LINKER.ld				#I will eventually move this.

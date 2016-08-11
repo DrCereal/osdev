@@ -1,13 +1,11 @@
 //This will probably be changed in the future!
 
 #include <terminal.h>
+#include <gdt.h>
 
 void init()
 {
-	char string[] = "Hello!";
-	print(string);
-	putHex(16);
-	putHex(0x10);
-	putHex(32);
-	putHex(0x20);
+	install_gdt();
+	terminal_init();
+	print("Hello...");
 }

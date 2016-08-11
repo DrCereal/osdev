@@ -28,6 +28,21 @@ _start:
 	extern init
 	call init
 .end:
+;Lel, I accidently moved this and got some nice triple faults Xd
 die:	cli
 	hlt
 	jmp die
+
+global flush_gdt
+extern gp
+flush_gdt:
+	lgdt [gp]
+	mov ax, 0x10
+	mov es, ax
+	mov ds, ax
+	mov fs, ax
+	mov gs, ax
+	mov ss, ax
+	jmp 0x8:gdt_ret
+gdt_ret:
+	ret
