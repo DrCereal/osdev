@@ -28,10 +28,8 @@ _start:
 	extern init
 	call init
 .end:
-;Lel, I accidently moved this and got some nice triple faults Xd
-die:	cli
-	hlt
-	jmp die
+;TODO: Add reboot, for now simple die.
+die:	jmp die
 
 global flush_gdt
 extern gp

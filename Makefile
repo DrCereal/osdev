@@ -12,6 +12,7 @@ output/kernel.bin: compile
 
 compile: ${DEPS}
 	@(nasm -f elf32 -o output/start.o boot/grub.asm)
+	@(nasm -f elf32 -o output/assembly.o kernel/assembly.asm)
 	@(${CC} -I${INCLUDE} -c $^ ${CCFLAGS})
 	@(mv *.o output)
 
