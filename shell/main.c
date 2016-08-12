@@ -4,9 +4,10 @@
 
 #define BUFFER_SIZE 256
 
+//TODO: malloc
 static char buffer[BUFFER_SIZE];
 
-static void shell_get_command()
+static void get_command()
 {
 	for(int i = 0;;)
 	{
@@ -35,17 +36,67 @@ static void shell_get_command()
 	}
 }
 
-char prompt[] = "# ";
+
+//TODO: Fix this when malloc is added!
+static char argv[16][32] = {};
+
+static void shell_clear_args()
+{
+	for(int i = 0; i < 16; i++)
+	{
+		for(int j = 0; j < 32; j++)
+			argv[i][j] = 0;
+	}
+}
+
+static char parse_command()
+{
+	//TODO: Remove!
+	shell_clear_args();
+
+	int j = 0;
+	for(int i = 0; buffer[i] != 0; j++)
+	{
+		if(j >= 16)
+			return -1;
+
+		for(; buffer[i] == ' '; i++);
+		if(buffer[i] == 0)
+			break;
+
+		int k = i;
+		for(; buffer[i] != ' ' && buffer[i] != 0 && i - k < 32; i++)
+			argv[j][i - k] = buffer[i];
+
+		if(i - k >= 32)
+			return -1;
+
+		argv[j][i - k] = 0;
+	}
+	return j;
+}
+
+//TODO: Implement commands!
+static char run_command(char argc)
+{}
 
 void shell_init()
 {
 	terminal_init();
 	
+	//TODO: Add escape key combo thing here!
 	while(1)
 	{
-		print(prompt);
-		shell_get_command();
-		print(buffer);
-		print("\n");
+		print("# ");
+		get_command();
+		char argc = parse_command();
+
+		if(argc == -1)
+		{
+			print("invalid argument lengths!\n");
+			continue;
+		}
+
+		run_command(argc);
 	}
 }
