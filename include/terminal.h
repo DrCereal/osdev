@@ -27,6 +27,10 @@ void terminal_set_color(unsigned char color);
 void terminal_clear();
 void terminal_init();
 
+void set_cursor(unsigned short nposition);
+unsigned short get_cursor();
+void set_char(unsigned char c);
+
 void putChar(unsigned char c);
 void putChar_color(unsigned char c, unsigned char color);
 void putInt(unsigned int i);

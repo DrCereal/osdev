@@ -7,13 +7,13 @@
 
 //TODO: Add all the f* keys and keypad/extended keys!
 unsigned char scan_set[] = {"\x0""\x1b""1234567890-=""\x8"
-			"\x9""qwertyuiop[]""\x10"
+			"\x9""qwertyuiop[]""\xa"
 			"\x0""asdfghjkl;'"
 			"`""\x0""\\"
 			"zxcvbnm,./""\x0"
 			"*""\x0"" ""\x0"};
 unsigned char shift_scan_set[] = {"\x0""\x1b""!@#$%^&*()_+""\x8"
-			"\x9""QWERTYUIOP{}""\x10"
+			"\x9""QWERTYUIOP{}""\xa"
 			"\x0""ASDFGHJKL:\""
 			"~""\x0""|"
 			"ZXCVBNM<>?""\x0"

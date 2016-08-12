@@ -23,7 +23,7 @@ void terminal_set_color(unsigned char color)
 
 void terminal_clear()
 {
-	x = 0; y = 0;
+	x = y = 0;
 	update_cursor();
 
 	for(short i = 0; i < 80 * 25; i++)
@@ -34,6 +34,25 @@ void terminal_init()
 {
 	terminal_clear();
 	terminal_set_color(0x0f);
+}
+
+void set_cursor(unsigned short nposition)
+{
+	x = nposition % 80;
+	y = nposition / 80;
+	update_cursor();
+}
+
+unsigned short get_cursor()
+{
+	return (y * 80) + x;
+}
+
+void set_char(unsigned char c)
+{
+	unsigned short absolute_pos = ((y * 80) + x) * 2;
+	VIDMEM[absolute_pos++] = c;
+	VIDMEM[absolute_pos] = terminal_color;
 }
 
 static void update_cursor()
