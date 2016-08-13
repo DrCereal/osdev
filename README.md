@@ -1,8 +1,7 @@
-# My "Operating system"
-Very hacked together code. It will remain this way because I plan to restart sometime in the future!
+# OS project name Rainman
 
-I expect you to already have a cross compiler to compile this code with. View the Makefile for more information.
+Just an OS to help me learn how OSs function. The code will be very hacked together and messy (even though I do **try** to make it look nice) so don't expect anything that great.
 
-I will eventually add a link so you can download a pre-built cross compiler.
+Don't ask about the name because I have no clue Xd.
 
-Had to reset repo because of a mistake I had made. (whoops)
+Read TODO.md for tasks that have been completed/planned out.
