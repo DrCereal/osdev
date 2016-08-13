@@ -1,10 +1,24 @@
 #ifndef STRING
 #define STRING
 
-int strlen(char* str)
+//GG, this took ages to do.
+inline int strlen(char* str)
 {
 	int i = 0;
-	for(;str[i] != 0; i++);
+	__asm__("pushl %%eax\n"
+		"xor %0, %0\n"
+		"1:\n"
+		"movb (%1), %%al\n"
+		"cmpb $0, %%al\n"
+		"je 2f\n"
+		"incl %1\n"
+		"incl %0\n"
+		"jmp 1b\n"
+		"2:\n"
+		"popl %%eax\n":
+		"=c"(i):
+		"S"(str)
+	);
 	return i;
 }
 
