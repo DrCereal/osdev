@@ -76,9 +76,47 @@ static char parse_command()
 	return j;
 }
 
-//TODO: Implement commands!
+//TODO: Move these string functions to 'string.h'
+
+static int strlen(char* str)
+{
+	int i = 0;
+	for(;str[i] != 0; i++);
+	return i;
+}
+
+static char strcmp(char* str1, char* str2)
+{
+	int str1_len = strlen(str1);
+	if(str1_len != strlen(str2))
+		return 0;
+
+	for(int i = 0; i < str1_len; i++)
+	{
+		if(str1[i] != str2[i])
+			return 0;
+	}
+	return 1;
+}
+
+//TODO: Implement more&better commands!
 static char run_command(char argc)
-{}
+{
+	if(argc == 1)
+	{
+		if(strcmp(argv[0], "clear"))
+		{
+			terminal_clear();
+			return 1;
+		}
+		if(strcmp(argv[0], "temp"))
+		{
+			print("This command is basically just filler at the moment :(\n");
+			return 1;
+		}
+	}
+	return 0;
+}
 
 void shell_init()
 {
@@ -97,6 +135,7 @@ void shell_init()
 			continue;
 		}
 
-		run_command(argc);
+		if(!run_command(argc))
+			print("Invalid command!\n");
 	}
 }
