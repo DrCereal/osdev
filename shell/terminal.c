@@ -1,6 +1,8 @@
 #include <asm/io.h>
 #include <terminal.h>
 
+//TODO: In the future, switch this stuff out for assembly code!
+
 static char* VIDMEM = (char*) 0xb8000;
 
 static unsigned char x = 0;
@@ -8,6 +10,7 @@ static unsigned char y = 0;
 static unsigned char terminal_color = 0x0;
 
 static void update_cursor();
+static void mov_up();
 
 unsigned char make_VGA_color(enum vga_color fg, enum vga_color bg)
 {
@@ -63,7 +66,7 @@ static void update_cursor()
 		y++;
 	}
 	if(y >= 25)
-		y = 0;
+		mov_up();
 
 	unsigned short terminal_pos = (y * 80 + x);
 
@@ -71,6 +74,24 @@ static void update_cursor()
 	outb(0x03d5, terminal_pos & 0xff);
 	outb(0x03d4, 0x0e);
 	outb(0x03d5, terminal_pos >> 8);
+}
+
+//TODO: Replace with assembly code for better performance!
+static void mov_up()
+{
+	for(int i = 80; i < 25 * 80; i++)
+	{
+		VIDMEM[(i - 80) * 2] = VIDMEM[i * 2];
+		VIDMEM[((i - 80) * 2) + 1] = VIDMEM[(i * 2) + 1];
+	}
+
+	for(int i = 80 * 24; i < 80 * 25; i++)
+	{
+		VIDMEM[i * 2] = ' ';
+		VIDMEM[(i * 2) + 1] = terminal_color;
+	}
+
+	y = 24;
 }
 
 void putChar(unsigned char c)
