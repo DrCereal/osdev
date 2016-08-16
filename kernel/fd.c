@@ -179,7 +179,6 @@ char fd_seek(char drive, char cyl, char head)
 void fd_read_sec(char drive, char head, char track, char sector)
 {
 	toggle_motor(1, drive);
-	print("For fuck's sake\n");
 
 	putInt(fd_seek(drive, track, head));
 	putChar(10);
