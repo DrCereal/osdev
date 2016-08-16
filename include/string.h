@@ -36,4 +36,15 @@ char strcmp(char* str1, char* str2)
 	return 1;
 }
 
+void memset(char* str, char value, int bytes)
+{
+	__asm__("1:\n"
+		"movb %1, (%2)"
+		"": :
+		"c"(bytes),
+		"d"(value),
+		"D"(str)
+	);
+}
+
 #endif

@@ -18,22 +18,22 @@ error_divide:
 ;IRQs
 
 timer:
-	push eax
-	mov al, 0x20
-	out 0x20, al
-	pop eax
+	call reset_pic
 	iret
 
 keyboard:
 	call do_keyboard
-	push eax
-	in al, 0x60
-	mov al, 0x20
-	out 0x20, al
-	pop eax
+	call reset_pic
 	iret
 
 ;Misc assembly functions
+
+reset_pic:
+	push eax
+	mov al, 0x20
+	out 0x20, al
+	pop eax
+	ret
 
 sti:
 	sti
@@ -51,11 +51,7 @@ reserved:
 	call print
 	add esp, 4
 	pop ebp
-	push eax
-	mov al, 0x20
-	out 0x20, al
-	pop eax
-	iret
+	jmp $
 
 test_msg db "Just testing the trap! :-)", 10, 0
 reserved_msg db "The reserved trap was called!", 10, 0
