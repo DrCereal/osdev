@@ -1,7 +1,7 @@
-extern print, ip
+extern print, ip, fd_irq_handled
 extern do_keyboard
 
-global error_divide, timer, keyboard
+global error_divide, timer, keyboard, fd_interrupt
 global reserved, install_idt, sti
 
 ;TODO: Actually make this fix the error!
@@ -23,6 +23,12 @@ timer:
 
 keyboard:
 	call do_keyboard
+	call reset_pic
+	iret
+
+;FDC interrupt, this interrupt is not called after FDC reset.
+fd_interrupt:
+	mov BYTE [fd_irq_handled], 1
 	call reset_pic
 	iret
 

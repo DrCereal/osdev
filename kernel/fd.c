@@ -17,12 +17,6 @@ static void set_drive_data(char stepr, char loadt, char unloadt, char dma);
 char fd_calibrate(char drive);
 static void check_int(int* st0, int* cyl);
 
-void do_fd_irq()
-{
-	fd_irq_handled = 1;
-	print("Do we get here?\n");
-}
-
 static void set_dor(char val)
 {
 	outb(DOR0, val);
@@ -44,17 +38,13 @@ static void fd_reset()
 
 	set_drive_data(3, 16, 240, 1);
 
+	//TODO: Maybe floppy drive detection here or something?
 	for(char i = 0; i < 4; i++)
-	{
 		fd_calibrate(i);
-		print("This ran this amount of times!\n");
-	}
 }
 
 void fd_init()
 {
-	//set_interrupt_gate(39, (int)&fd_interrupt);
-
 	//Mask channel 2.
 	outb(MASK, 0x6);
 	//Reset master flip flop
@@ -72,16 +62,12 @@ void fd_init()
 	//Unmask channel 2
 	outb(MASK, 0x2);
 
-	//fd_calibrate(0);
 	fd_reset();
 }
 
 static void wait_for_irq()
 {
-	while(!fd_irq_handled)
-	{
-		//putChar('a');
-	}
+	while(!fd_irq_handled);
 	fd_irq_handled = 0;
 }
 
@@ -91,12 +77,7 @@ static void toggle_motor(char state, unsigned char drive)
 	if(drive >= 4 || state > 1)
 		return;
 
-	putHex(DOR0);
-	putChar(10);
-	putHex(0xc | driveT[drive] << 4);
-	putChar(10);
-
-	outb(DOR0, 0xc | driveT[drive] << 4);
+	outb(DOR0, 0xc | (state == 0) ? 0 : driveT[drive] << 4);
 }
 
 static void send_command(char cmd)
@@ -197,6 +178,12 @@ char fd_seek(char drive, char cyl, char head)
 
 void fd_read_sec(char drive, char head, char track, char sector)
 {
+	toggle_motor(1, drive);
+	print("For fuck's sake\n");
+
+	putInt(fd_seek(drive, track, head));
+	putChar(10);
+
 	int st0, cyl;
 
 	//Set DMA for READ mode.
@@ -207,7 +194,7 @@ void fd_read_sec(char drive, char head, char track, char sector)
 	//Send command to read (m, s, d)
 	send_command(0xe6);
 	//Send parameters
-	send_command(head << 2 | drive);
+	send_command((head & 1) << 2 | drive);
 	send_command(track);
 	send_command(head);
 	send_command(sector);
@@ -220,7 +207,19 @@ void fd_read_sec(char drive, char head, char track, char sector)
 
 	//Do something useful with this eventually!
 	for(int i = 0; i < 7; i++)
-		read_data();
+	{
+		if(i < 3)
+		{
+			print("i: ");
+			putInt(i);
+			putChar(',');
+			putHex(read_data());
+			putChar(10);
+		}else{
+			read_data();
+		}
+	}
 
 	check_int(&st0, &cyl);
+	toggle_motor(0, drive);
 }
