@@ -180,7 +180,7 @@ void fd_read_sec(char drive, char head, char track, char sector)
 {
 	//Set DMA for READ mode.
 	outb(MASK, 0x6);
-	outb(MODE, 0x5a);
+	outb(MODE, 0x56);
 	outb(MASK, 0x2);
 	
 	toggle_motor(1, drive);
