@@ -178,17 +178,17 @@ char fd_seek(char drive, char cyl, char head)
 
 void fd_read_sec(char drive, char head, char track, char sector)
 {
+	//Set DMA for READ mode.
+	outb(MASK, 0x6);
+	outb(MODE, 0x5a);
+	outb(MASK, 0x2);
+	
 	toggle_motor(1, drive);
 
 	putInt(fd_seek(drive, track, head));
 	putChar(10);
 
 	int st0, cyl;
-
-	//Set DMA for READ mode.
-	outb(MASK, 0x6);
-	outb(MODE, 0x5a);
-	outb(MASK, 0x2);
 
 	//Send command to read (m, s, d)
 	send_command(0xe6);
@@ -209,11 +209,13 @@ void fd_read_sec(char drive, char head, char track, char sector)
 	{
 		if(i < 3)
 		{
+			//Debugging
 			print("i: ");
 			putInt(i);
 			putChar(',');
 			putHex(read_data());
 			putChar(10);
+			//-=-=-=-=-=-=-=-=-=-=-=-
 		}else{
 			read_data();
 		}
