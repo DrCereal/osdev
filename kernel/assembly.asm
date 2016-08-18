@@ -1,5 +1,5 @@
 extern print, ip, fd_irq_handled
-extern do_keyboard
+extern do_keyboard, do_timer
 
 global error_divide, timer, keyboard, fd_interrupt
 global reserved, install_idt, sti
@@ -18,6 +18,7 @@ error_divide:
 ;IRQs
 
 timer:
+	call do_timer
 	call reset_pic
 	iret
 

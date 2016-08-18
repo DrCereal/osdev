@@ -2,11 +2,12 @@
 #include <fd.h>
 #include <irq.h>
 
-//Debugging
-#include <terminal.h>
+//TODO: Revamp this driver COMPLETELY. It's unoraginzed-hacked together code
+//that looks like absolute trash.
 
 extern void fd_interrupt();
 volatile char fd_irq_handled = 0;
+extern volatile unsigned long count;
 
 //THE FDC IS ALWAYS IN DMA MODE!
 //Who knows, maybe I'll move the dma garbage to it's own place?
@@ -67,7 +68,8 @@ void fd_init()
 
 static void wait_for_irq()
 {
-	while(!fd_irq_handled);
+	unsigned long lCount = count;
+	while(!fd_irq_handled && (count - lCount) < 10);
 	fd_irq_handled = 0;
 }
 
@@ -77,7 +79,8 @@ static void toggle_motor(char state, unsigned char drive)
 	if(drive >= 4 || state > 1)
 		return;
 
-	outb(DOR0, 0xc | (state == 0) ? 0 : driveT[drive] << 4);
+	outb(DOR0, 0xc | driveT[drive] << 4);
+	for(int i = 0; i < 10000; i++);
 }
 
 static void send_command(char cmd)
@@ -176,6 +179,17 @@ char fd_seek(char drive, char cyl, char head)
 	return -1;
 }
 
+//Turns on and selects drive.
+
+static void select_drive(unsigned char drive)
+{
+	if(drive >= 4)
+		return;
+
+	set_dor(0xc | drive | driveT[drive]);
+	for(int i = 0; i < 10000; i++);
+}
+
 void fd_read_sec(char drive, char head, char track, char sector)
 {
 	//Set DMA for READ mode.
@@ -183,10 +197,9 @@ void fd_read_sec(char drive, char head, char track, char sector)
 	outb(MODE, 0x56);
 	outb(MASK, 0x2);
 	
-	toggle_motor(1, drive);
+	select_drive(drive);
 
-	putInt(fd_seek(drive, track, head));
-	putChar(10);
+	fd_seek(drive, track, 0);
 
 	int st0, cyl;
 
@@ -206,20 +219,7 @@ void fd_read_sec(char drive, char head, char track, char sector)
 
 	//Do something useful with this eventually!
 	for(int i = 0; i < 7; i++)
-	{
-		if(i < 3)
-		{
-			//Debugging
-			print("i: ");
-			putInt(i);
-			putChar(',');
-			putHex(read_data());
-			putChar(10);
-			//-=-=-=-=-=-=-=-=-=-=-=-
-		}else{
-			read_data();
-		}
-	}
+		read_data();
 
 	check_int(&st0, &cyl);
 	toggle_motor(0, drive);
