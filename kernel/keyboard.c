@@ -18,8 +18,14 @@ unsigned char shift_scan_set[] = {"\x0""\x1b""!@#$%^&*()_+""\x8"
 			"~""\x0""|"
 			"ZXCVBNM<>?""\x0"
 			"*""\x0"" ""\x0"};
+unsigned char caps_scan_set[] = {"\x0""\x1b""1234567890-=""\x8"
+			"\x9""QWERTYUIOP[]""\xa"
+			"\x0""ASDFGHJKL;'"
+			"`""\x0""\\"
+			"ZXCVBNM,./""\x0"
+			"*""\x0"" ""\x0"};
 
-static volatile unsigned char char_buf;
+static volatile unsigned char char_buf = 0;
 
 static unsigned char shift;
 static unsigned char control;
@@ -28,8 +34,8 @@ static unsigned char caps;
 
 unsigned char kbrd_get_key()
 {
-	char_buf = 0;
 	while(!char_buf);
+	char_buf = 0;
 	
 	return char_buf;
 }
@@ -74,13 +80,16 @@ void do_keyboard()
 	//CAPS
 	if(scan_code == 0x3a)
 	{
-		//TODO: Make a proper caps!
-		//caps = !caps;
+		caps = !caps;
 	}
 
 	if(scan_code < sizeof(scan_set))
 	{
-		if(shift || caps)
+		if(caps)
+			char_buf = caps_scan_set[scan_code];
+		
+		//Shift overrides the caps scan set.	
+		if(shift)
 		{
 			char_buf = shift_scan_set[scan_code];
 			return;		
