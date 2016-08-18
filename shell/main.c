@@ -2,6 +2,7 @@
 #include <keyboard.h>
 #include <terminal.h>
 #include <string.h>
+#include <fd.h>
 
 #define BUFFER_SIZE 256
 
@@ -59,7 +60,7 @@ static char parse_command()
 	for(int i = 0; buffer[i] != 0; j++)
 	{
 		if(j >= 16)
-			return -1;
+			return(-1);
 
 		for(; buffer[i] == ' '; i++);
 		if(buffer[i] == 0)
@@ -70,11 +71,11 @@ static char parse_command()
 			argv[j][i - k] = buffer[i];
 
 		if(i - k >= 32)
-			return -1;
+			return(-1);
 
 		argv[j][i - k] = 0;
 	}
-	return j;
+	return(j);
 }
 
 //TODO: Implement more&better commands!
@@ -85,15 +86,15 @@ static char run_command(char argc)
 		if(strcmp(argv[0], "clear"))
 		{
 			terminal_clear();
-			return 1;
+			return(1);
 		}
 		if(strcmp(argv[0], "temp"))
 		{
-			print("This command is basically just filler at the moment :(\n");
-			return 1;
+			print("Still just a temp command. I was using this to test the Floppy driver driver.\n");
+			return(1);
 		}
 	}
-	return 0;
+	return(0);
 }
 
 void shell_init()

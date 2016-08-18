@@ -34,8 +34,8 @@ static unsigned char caps;
 
 unsigned char kbrd_get_key()
 {
-	while(!char_buf);
 	char_buf = 0;
+	while(!char_buf);
 	
 	return char_buf;
 }

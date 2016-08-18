@@ -6,6 +6,7 @@ extern struct idt_entry idt[256];
 
 extern void timer();
 extern void keyboard();
+extern void fd_interrupt();
 
 void set_interrupt_gate(unsigned short i, unsigned int ir)
 {
@@ -36,8 +37,15 @@ void remap_pic()
 void irq_init()
 {
 	remap_pic();
-	outb(0x21, 0xfc);
+	//FDC interrupt is not masked in the PIC
+	outb(0x21, 0xbc);
 	
 	set_interrupt_gate(32, (unsigned int)&timer);
 	set_interrupt_gate(33, (unsigned int)&keyboard);
+
+	//IRQ 6 is now set up to 'fd_interrupt()' located in assembly.asm
+	set_interrupt_gate(38, (unsigned int)&fd_interrupt);
+	//proof:
+	//__asm__("int $38");
+	//for(;;);
 }
