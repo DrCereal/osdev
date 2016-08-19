@@ -190,7 +190,7 @@ static void select_drive(unsigned char drive)
 	for(int i = 0; i < 10000; i++);
 }
 
-void fd_read_sec(char drive, char head, char track, char sector)
+void fd_read_sec(char drive, char head, char track, char sector, char nsectors)
 {
 	//Set DMA for READ mode.
 	outb(MASK, 0x6);
@@ -211,7 +211,7 @@ void fd_read_sec(char drive, char head, char track, char sector)
 	send_command(head);
 	send_command(sector);
 	send_command(S_512);
-	send_command((sector + 1 >= 18) ? 18 : sector + 1);
+	send_command((nsectors + 1 >= 18) ? 18 : nsectors + 1);
 	send_command(GAP_3_5);
 	send_command(0xff);
 

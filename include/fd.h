@@ -49,6 +49,6 @@ enum SECTOR_SIZE
 };
 
 void fd_init();
-void fd_read_sec(char drive, char head, char track, char sector);
+void fd_read_sec(char drive, char head, char track, char sector, char nsectors);
 
 #endif
