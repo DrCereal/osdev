@@ -90,7 +90,20 @@ static char run_command(char argc)
 		}
 		if(strcmp(argv[0], "temp"))
 		{
-			print("Still just a temp command. I was using this to test the Floppy driver driver.\n");
+			//This command is temporary and serves no purpose.
+			fd_read_sec(0, 0, 0, 1, 2);
+
+			char* membuf = (char*)0x1000;
+			for(int i = 0; i < 1024;)
+			{
+				int j = i;
+				for(;i - j < 256; i++)
+				{
+					putHex(membuf[i] & 0xff);
+					putChar(' ');
+				}
+				kbrd_get_key();
+			}
 			return(1);
 		}
 	}
