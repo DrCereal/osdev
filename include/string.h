@@ -5,17 +5,14 @@
 inline int strlen(char* str)
 {
 	int i = 0;
-	__asm__("pushl %%eax\n"
-		"xor %0, %0\n"
+	__asm__ volatile(
 		"1:\n"
-		"movb (%1), %%al\n"
+		"lodsb\n"
 		"cmpb $0, %%al\n"
 		"je 2f\n"
-		"incl %1\n"
 		"incl %0\n"
 		"jmp 1b\n"
-		"2:\n"
-		"popl %%eax\n":
+		"2:\n":
 		"=c"(i):
 		"S"(str)
 	);
