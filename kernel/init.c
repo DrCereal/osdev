@@ -5,8 +5,7 @@
 #include <traps.h>
 #include <irq.h>
 #include <fd.h>
-
-extern void sti();
+#include <asm/misc.h>
 
 unsigned long lCount = 0;
 extern volatile unsigned long count;

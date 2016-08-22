@@ -42,10 +42,6 @@ reset_pic:
 	pop eax
 	ret
 
-sti:
-	sti
-	ret
-
 install_idt:
 	lidt [ip]
 	ret
