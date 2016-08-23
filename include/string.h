@@ -6,8 +6,8 @@ inline int strlen(char* str)
 {
 	int i = 0;
 	__asm__ volatile(
-		"1:\n"
-		"lodsb\n"
+		"cld\n"
+		"1: lodsb\n"
 		"cmpb $0, %%al\n"
 		"je 2f\n"
 		"incl %0\n"
@@ -16,30 +16,39 @@ inline int strlen(char* str)
 		"=c"(i):
 		"S"(str)
 	);
-	return i;
+	return(i);
 }
 
 char strcmp(char* str1, char* str2)
 {
 	int str1_len = strlen(str1);
 	if(str1_len != strlen(str2))
-		return 0;
+		return(0);
 
-	for(int i = 0; i < str1_len; i++)
-	{
-		if(str1[i] != str2[i])
-			return 0;
-	}
-	return 1;
+	char ret = 0;
+
+	__asm__(
+		"cld\n"
+		"repe cmpsb\n"
+		"jcxnz 1f\n"
+		"jmp 2f\n"
+		"1: movb $1, %0\n"
+		"2:\n":
+		"=d"(ret):
+		"c"(str1_len),
+		"S"(str1),
+		"D"(str2)
+	);
+	return(ret);
 }
 
-void memset(char* str, char value, int bytes)
+void memset(char* str, char value, int num)
 {
-	__asm__("1:\n"
-		"movb %1, (%2)"
-		"": :
-		"c"(bytes),
-		"d"(value),
+	__asm__ volatile(
+		"cld\n"
+		"rep stosb\n": :
+		"c"(num),
+		"a"(value),
 		"D"(str)
 	);
 }
